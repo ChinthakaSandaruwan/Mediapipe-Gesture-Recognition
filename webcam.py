@@ -14,19 +14,24 @@ options = GestureRecognizerOptions(
 
 with GestureRecognizer.create_from_options(options) as recognizer:
 
-   image = mp.Image.create_from_file('hand.jpg')
-   
-   result = recognizer.recognize(image)
-   
-   gestureName = result.gestures[0][0].category_name
-   print(gestureName)
+ webCam = cv2.VideoCapture(0)
 
-   i = cv2.imread("hand.jpg")
-   resized_i = cv2.resize(i, (800, 600), interpolation=cv2.INTER_LINEAR)
+ while True:
+    b,frame = webCam.read()
 
-   cv2.putText(resized_i,gestureName,(20,50),cv2.FONT_HERSHEY_PLAIN,3,(0,0,255),3)
-   cv2.imshow("AI Mediapipe Gesture Recognition",resized_i)
-   cv2.waitKey(0)
+    rgbframe =cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)
+
+    image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgbframe)
+
+    result = recognizer.recognize(image)
+    if result.gestures:
+        gestureName = result.gestures[0][0].category_name
+        
+
+        cv2.putText(frame,gestureName,(20,50),cv2.FONT_HERSHEY_PLAIN,3,(0,0,255),3)
+        
+    cv2.imshow("AI Mediapipe Gesture Recognition",frame)
+    cv2.waitKey(1)
 
    
 
